@@ -1,0 +1,11 @@
+!! Caps Lock -> Control
+remove Lock = Caps_Lock
+keycode 66 = Control_R
+add Control = Control_R
+
+!! Muhenkan -> Zenkaku_Hankaku
+keycode 102 = Zenkaku_Hankaku
+
+!! Henkan -> Escape
+keycode 100 = Escape
+
