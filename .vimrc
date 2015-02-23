@@ -37,6 +37,15 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 "---------------------------------------------------------------------------
 " NeoBundle setting
 "
+NeoBundle 'Shougo/vimproc.vim', {
+\ 'build' : {
+\     'windows' : 'tools\\update-dll-mingw',
+\     'cygwin' : 'make -f make_cygwin.mak',
+\     'mac' : 'make -f make_mac.mak',
+\     'linux' : 'make',
+\     'unix' : 'gmake',
+\    },
+\ }
 NeoBundle 'YankRing.vim'
 NeoBundle 'honza/vim-snippets'
 NeoBundle 'othree/html5.vim'
@@ -83,6 +92,7 @@ NeoBundleLazy "autowitch/hive.vim", {
       \   "filetypes": ["hive"],
       \ }
       \ }
+NeoBundle 'Vim-R-plugin'
 
 call neobundle#end()
 
@@ -93,7 +103,6 @@ NeoBundleCheck
 "---------------------------------------------------------------------------
 " vim-singleton
 "
-let g:singleton#ignore_pattern="eml|tmp"
 call singleton#enable()
 
 "---------------------------------------------------------------------------
@@ -116,12 +125,6 @@ set whichwrap=b,s,h,l,<,>,[,]		" カーソルを行頭、行末で止まらないようにする
 "---------------------------------------------------------------------------
 " indentの設定
 "
-set expandtab "タブ入力を複数の空白入力に置き換える
-set tabstop=2 "画面上でタブ文字が占める幅
-set shiftwidth=2 "自動インデントでずれる幅
-set softtabstop=2 "連続した空白に対してタブキーやバックスペースキーでカーソルが動く幅
-"set autoindent "改行時に前の行のインデントを継続する
-set smartindent "改行時に入力された行の末尾に合わせて次の行のインデントを増減する
 set ignorecase
 set wildignorecase
 set nosmartcase
@@ -130,7 +133,15 @@ set ambiwidth=double
 "Tab、行末の半角スペースを明示的に表示する
 set list
 set listchars=tab:>-,trail:-,nbsp:%,extends:>,precedes:<
+set expandtab "タブ入力を複数の空白入力に置き換える
+set tabstop=2 "画面上でタブ文字が占める幅
+set shiftwidth=2 "自動インデントでずれる幅
+set softtabstop=2 "連続した空白に対してタブキーやバックスペースキーでカーソルが動く幅
+set smartindent "改行時に入力された行の末尾に合わせて次の行のインデントを増減する
 
+"---------------------------------------------------------------------------
+" filetype毎の設定
+"
 augroup vimrc
   autocmd!
 augroup END
@@ -158,22 +169,31 @@ autocmd vimrc FileType markdown setlocal et sw=2 ts=2 sts=2 ff=unix fenc=utf-8
 let g:unite_source_file_mru_limit = 300
 let g:unite_source_history_yank_enable = 1
 let g:unite_split_rule = "rightbelow"
+try
+  let g:unite_source_rec_async_command='ag --nocolor --nogroup -g ""'
+  call unite#filters#matcher_default#use(['matcher_fuzzy'])
+catch
+endtry
 " key-map
 nnoremap  [unite]  <Nop>
 nmap      <Space>u  [unite]
 
+" プロジェクトファイルの検索
+nnoremap <space><space> :<C-u>Unite -start-insert file_rec/async<cr>
 " unite起動
-nnoremap [unite]u    :<C-u>Unite -no-split<Space>
+nnoremap [unite]u :<C-u>Unite -no-split<Space>
 " カレントリスト
-nnoremap <silent> [unite]c   :<C-u>UniteWithCurrentDir -buffer-name=files buffer file_mru bookmark file<CR>
+nnoremap <silent> [unite]c :<C-u>UniteWithCurrentDir -buffer-name=files buffer file_mru bookmark file<CR>
 " バッファリスト
-nnoremap <silent> [unite]b    :<C-u>Unite buffer<CR>
+nnoremap <silent> [unite]b :<C-u>Unite buffer<CR>
 " 最近使ったファイル
-nnoremap <silent> [unite]m    :<C-u>Unite file_mru<CR>
+nnoremap <silent> [unite]m :<C-u>Unite file_mru<CR>
 " yank履歴
-nnoremap <silent> [unite]y    :<C-u>Unite history/yank<CR>
+nnoremap <silent> [unite]y :<C-u>Unite history/yank<CR>
 " unite-outline
-nnoremap <silent> [unite]o    :<C-u>Unite -vertical -no-quit -winwidth=30 outline<CR>
+nnoremap <silent> [unite]o :<C-u>Unite -vertical -no-quit -winwidth=30 outline<CR>
+" unite restart
+nnoremap <space>r <Plug>(unite_restart)
 
 "---------------------------------------------------------------------------
 " neocompleteの設定
