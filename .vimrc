@@ -179,7 +179,7 @@ nnoremap  [unite]  <Nop>
 nmap      <Space>u  [unite]
 
 " プロジェクトファイルの検索
-nnoremap <space><space> :<C-u>Unite -start-insert file_rec/async<cr>
+nnoremap <space><space> :<C-u>Unite -start-insert file_rec/async:!<cr>
 " unite起動
 nnoremap [unite]u :<C-u>Unite -no-split<Space>
 " カレントリスト
@@ -240,59 +240,23 @@ inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
 inoremap <expr><C-y>  neocomplete#close_popup()
 inoremap <expr><C-e>  neocomplete#cancel_popup()
-" Close popup by <Space>.
-"inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() : "\<Space>"
-
-" For cursor moving in insert mode(Not recommended)
-"inoremap <expr><Left>  neocomplete#close_popup() . "\<Left>"
-"inoremap <expr><Right> neocomplete#close_popup() . "\<Right>"
-"inoremap <expr><Up>    neocomplete#close_popup() . "\<Up>"
-"inoremap <expr><Down>  neocomplete#close_popup() . "\<Down>"
-" Or set this.
-"let g:neocomplete#enable_cursor_hold_i = 1
-" Or set this.
-"let g:neocomplete#enable_insert_char_pre = 1
-
-" AutoComplPop like behavior.
-"let g:neocomplete#enable_auto_select = 1
-
-" Shell like behavior(not recommended).
-"set completeopt+=longest
-"let g:neocomplete#enable_auto_select = 1
-"let g:neocomplete#disable_auto_complete = 1
-"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
 
 " Enable omni completion.
+autocmd vimrc FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 autocmd vimrc FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd vimrc FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd vimrc FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 " autocmd vimrc FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd vimrc FileType python setlocal omnifunc=jedi#completions
+autocmd vimrc FileType python setlocal omnifunc=jedi#completions completeopt-=preview
 let g:jedi#completions_enabled = 0
 let g:jedi#auto_vim_configuration = 0
 let g:jedi#rename_command = '<Leader>R'
-autocmd vimrc FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 if !exists('g:neocomplete#force_omni_input_patterns')
   let g:neocomplete#force_omni_input_patterns = {}
 endif
-" let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
-let g:neocomplete#force_omni_input_patterns.python = '\h\w|[^. \t].\w'
-
-" Enable heavy omni completion.
-if !exists('g:neocomplete#sources#omni#input_patterns')
-  let g:neocomplete#sources#omni#input_patterns = {}
-endif
-let g:EclimCompletionMethod = 'omnifunc'
-let g:neocomplete#sources#omni#input_patterns.java = '\k\.\k*'
-let g:EclimJavascriptValidate = 0
-" let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-" let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-" let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-
-" For perlomni.vim setting.
-" https://github.com/c9s/perlomni.vim
-" let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
+" let g:neocomplete#force_omni_input_patterns.python = '\h\w|[^. \t].\w'
 
 "---------------------------------------------------------------------------
 " snipetの設定
@@ -391,7 +355,6 @@ set splitbelow splitright
 " TODOファイル
 command! Todo edit ~/todo.txt
 " 日報
-" command! Nippo execute 'edit D:/My Documents/日報/' . strftime("%Y%m%d") . '.md'
 command! -nargs=? Nippo call s:Nippo()
 function! s:Nippo()
   let l:day = (60 * 60 * 24)
@@ -415,8 +378,8 @@ endfunction
 " メモ
 command! -nargs=1 Memo edit D:/My Documents/議事メモ/<args>.txt
 " 一時ファイル
-command! -nargs=1 -complete=filetype Tmp edit ~/.vim/tmp.<args>
-command! -nargs=1 -complete=filetype Temp edit ~/.vim/tmp.<args>
+command! -nargs=1 Tmp edit ~/.vim/tmp.<args>
+command! -nargs=1 Temp edit ~/.vim/tmp.<args>
 " cd
 command! Ccd lcd %:p:h
 " vimgrepの結果をquickfixで表示
