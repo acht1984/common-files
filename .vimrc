@@ -70,6 +70,7 @@ NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'thinca/vim-singleton'
 NeoBundle 'w0ng/vim-hybrid'
+NeoBundle 'altercation/vim-colors-solarized.git'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'itchyny/lightline.vim'
 NeoBundle 'fuenor/im_control.vim'
@@ -169,11 +170,16 @@ autocmd vimrc FileType markdown setlocal et sw=2 ts=2 sts=2 ff=unix fenc=utf-8
 let g:unite_source_file_mru_limit = 300
 let g:unite_source_history_yank_enable = 1
 let g:unite_split_rule = "rightbelow"
-try
+
+" for ag
+if executable('ag')
   let g:unite_source_rec_async_command='ag --nocolor --nogroup -g ""'
   call unite#filters#matcher_default#use(['matcher_fuzzy'])
-catch
-endtry
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+  let g:unite_source_grep_recursive_opt = ''
+endif
+
 " key-map
 nnoremap  [unite]  <Nop>
 nmap      <Space>u  [unite]
@@ -184,6 +190,8 @@ nnoremap <space><space> :<C-u>Unite -start-insert file_rec/async:!<cr>
 nnoremap [unite]u :<C-u>Unite -no-split<Space>
 " カレントリスト
 nnoremap <silent> [unite]c :<C-u>UniteWithCurrentDir -buffer-name=files buffer file_mru bookmark file<CR>
+" grep
+nnoremap <silent> [unite]g :<C-u>Unite grep:. <CR>
 " バッファリスト
 nnoremap <silent> [unite]b :<C-u>Unite buffer<CR>
 " 最近使ったファイル
@@ -349,6 +357,11 @@ set undodir=$VIMLOCAL/undofiles
 " 新しいウィンドウを右下に開く
 set splitbelow splitright
 colorscheme hybrid
+
+"---------------------------------------------------------------------------
+" 見た目の設定
+set cursorline
+set number
 
 "---------------------------------------------------------------------------
 " メモとかの設定
