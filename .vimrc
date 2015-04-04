@@ -344,10 +344,11 @@ set undofile
 set undodir=$VIMLOCAL/undofiles
 
 "---------------------------------------------------------------------------
-" ウィンドウの開く向きの設定
+" 見た目とか
 "
 " 新しいウィンドウを右下に開く
 set splitbelow splitright
+colorscheme hybrid
 
 "---------------------------------------------------------------------------
 " メモとかの設定
@@ -384,3 +385,4 @@ command! -nargs=1 Temp edit ~/.vim/tmp.<args>
 command! Ccd lcd %:p:h
 " vimgrepの結果をquickfixで表示
 autocmd vimrc QuickFixCmdPost *grep* cwindow
+set number

@@ -1,9 +1,17 @@
-"" ツールバーを削除 
-set guioptions-=T 
-
+"ツールバーなし
+set guioptions-=T
+"メニューバーなし
+set guioptions-=m
+"右スクロールバーなし
+set guioptions-=r
+set guioptions-=R
+"左スクロールバーなし
+set guioptions-=l
+set guioptions-=L
+"下スクロールバーなし
+set guioptions-=b
 "" フォント設定 
-set guifont=Ricty\ 12
-set guifontwide=Ricty\ 12
+set guifont=Osaka-mono:h14
 
 "クリップボードをWindowsと連携 
 set clipboard=unnamed 
@@ -24,4 +32,6 @@ set stal=2
 " 0: 表示しない " 1: 2個以上のタブページがあるときのみ表示 
 " 2: 常に表示 
 set showtabline=2
+
+colorscheme hybrid
 
