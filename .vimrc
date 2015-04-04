@@ -362,6 +362,9 @@ colorscheme hybrid
 " Œ©‚½–Ú‚Ìİ’è
 set cursorline
 set number
+"ƒr[ƒv‰¹‚·‚×‚Ä‚ğ–³Œø‚É‚·‚é
+set visualbell t_vb=
+set noerrorbells 
 
 "---------------------------------------------------------------------------
 " ƒƒ‚‚Æ‚©‚Ìİ’è
