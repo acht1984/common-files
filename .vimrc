@@ -39,7 +39,7 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 "
 NeoBundle 'Shougo/vimproc.vim', {
 \ 'build' : {
-\     'windows' : 'tools\\update-dll-mingw',
+\     'win32' : 'tools\\update-dll-mingw',
 \     'cygwin' : 'make -f make_cygwin.mak',
 \     'mac' : 'make -f make_mac.mak',
 \     'linux' : 'make',
@@ -47,9 +47,9 @@ NeoBundle 'Shougo/vimproc.vim', {
 \    },
 \ }
 NeoBundle 'YankRing.vim'
+NeoBundle 'bronson/vim-trailing-whitespace'
 NeoBundle 'honza/vim-snippets'
 NeoBundle 'othree/html5.vim'
-NeoBundle 'Shougo/echodoc'
 NeoBundle 'Shougo/neocomplete'
 NeoBundle 'Shougo/neosnippet'
 NeoBundle 'Shougo/neosnippet-snippets'
@@ -59,7 +59,6 @@ NeoBundle 'Shougo/unite-help'
 NeoBundle 'Shougo/unite-outline'
 NeoBundle 'Shougo/unite-ssh'
 NeoBundle 'Shougo/neossh.vim'
-NeoBundle 'Shougo/vim-vcs'
 NeoBundle 'Shougo/vimfiler'
 NeoBundle 'Shougo/vimshell'
 NeoBundle 'Shougo/vinarise'
@@ -67,6 +66,7 @@ NeoBundle 'ujihisa/vimshell-ssh'
 NeoBundle 'tpope/vim-commentary'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'cohama/agit.vim'
 NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'thinca/vim-singleton'
 NeoBundle 'w0ng/vim-hybrid'
@@ -77,12 +77,7 @@ NeoBundle 'fuenor/im_control.vim'
 NeoBundle 'kchmck/vim-coffee-script'
 NeoBundle 'elzr/vim-json'
 NeoBundle 'plasticboy/vim-markdown'
-" NeoBundleLazy 'JavaScript-syntax', {'autoload':{'filetypes':['javascript']}}
-" NeoBundleLazy 'pangloss/vim-javascript', {'autoload':{'filetypes':['javascript']}}
-NeoBundleLazy 'marijnh/tern_for_vim', {
-      \ 'build' : {
-      \ 'others' : 'npm install'
-      \ }}
+NeoBundle 'alfredodeza/pytest.vim'
 NeoBundleLazy "davidhalter/jedi-vim", {
       \ "autoload": {
       \   "filetypes": ["python", "python3"],
@@ -94,6 +89,16 @@ NeoBundleLazy "autowitch/hive.vim", {
       \ }
       \ }
 NeoBundle 'Vim-R-plugin'
+NeoBundleLazy "lambdalisue/vim-django-support", {
+      \ "autoload": {
+      \   "filetypes": ["python", "python3", "htmldjango"]
+      \ }}
+NeoBundle 'jmcantrell/vim-virtualenv'
+NeoBundle 'fatih/vim-go'
+NeoBundle 'artur-shaik/vim-javacomplete2'
+NeoBundle 'shawncplus/phpcomplete.vim'
+" NeoBundle 'm2mdas/phpcomplete-extended'
+" NeoBundle 'm2mdas/phpcomplete-extended-laravel'
 
 call neobundle#end()
 
@@ -104,68 +109,89 @@ NeoBundleCheck
 "---------------------------------------------------------------------------
 " vim-singleton
 "
-call singleton#enable()
+" call singleton#enable()
 
 "---------------------------------------------------------------------------
-" ƒL[ƒ}ƒbƒv‚Ìİ’è
+" ã‚­ãƒ¼ãƒãƒƒãƒ—ã®è¨­å®š
 "
-" .vimrc‚ğŠJ‚­
+" .vimrcã‚’é–‹ã
 nnoremap <Space>.  :<C-u>edit $MYVIMRC<CR>
-" source ~/.vimrc ‚ğÀs‚·‚éB
-nnoremap <Space>,  :<C-u>source $MYVIMRC<CR> 
-" u“ú–{Œê“ü—ÍŒÅ’èƒ‚[ƒhvØ‘ÖƒL[
+" source ~/.vimrc ã‚’å®Ÿè¡Œã™ã‚‹ã€‚
+nnoremap <Space>,  :<C-u>source $MYVIMRC<CR>
+" ã€Œæ—¥æœ¬èªå…¥åŠ›å›ºå®šãƒ¢ãƒ¼ãƒ‰ã€åˆ‡æ›¿ã‚­ãƒ¼
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
-
+" æ¤œç´¢ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚’very magicã«
+nnoremap /  /\v
+" ã‚³ãƒãƒ³ãƒ‰å±¥æ­´ã‚’è³¢ã
+cnoremap <c-n>  <down>
+cnoremap <c-p>  <up>
 "---------------------------------------------------------------------------
-" “ü—Í‚Ì‰ü‘P
+" å…¥åŠ›ã®æ”¹å–„
 "
-set backspace=indent,eol,start		" ƒoƒbƒNƒXƒy[ƒX‚Å“Áê‹L†‚àíœ‰Â”\‚É
-set formatoptions=lmoq			" ®Œ`ƒIƒvƒVƒ‡ƒ“Cƒ}ƒ‹ƒ`ƒoƒCƒgŒn‚ğ’Ç‰Á
-set whichwrap=b,s,h,l,<,>,[,]		" ƒJ[ƒ\ƒ‹‚ğs“ªAs––‚Å~‚Ü‚ç‚È‚¢‚æ‚¤‚É‚·‚é
+set backspace=indent,eol,start  " ãƒãƒƒã‚¯ã‚¹ãƒšãƒ¼ã‚¹ã§ç‰¹æ®Šè¨˜å·ã‚‚å‰Šé™¤å¯èƒ½ã«
+set formatoptions=lmoq          " æ•´å½¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³ï¼Œãƒãƒ«ãƒãƒã‚¤ãƒˆç³»ã‚’è¿½åŠ 
+set whichwrap=b,s,h,l,<,>,[,]   " ã‚«ãƒ¼ã‚½ãƒ«ã‚’è¡Œé ­ã€è¡Œæœ«ã§æ­¢ã¾ã‚‰ãªã„ã‚ˆã†ã«ã™ã‚‹
+let g:sql_type_default = 'mysql'
 
 "---------------------------------------------------------------------------
-" indent‚Ìİ’è
+" indentã®è¨­å®š
 "
 set ignorecase
 set wildignorecase
 set nosmartcase
-set wildmode=list:full
+set wildmode=list:longest,full
 set ambiwidth=double
-"TabAs––‚Ì”¼ŠpƒXƒy[ƒX‚ğ–¾¦“I‚É•\¦‚·‚é
+"Tabã€è¡Œæœ«ã®åŠè§’ã‚¹ãƒšãƒ¼ã‚¹ã‚’æ˜ç¤ºçš„ã«è¡¨ç¤ºã™ã‚‹
 set list
 set listchars=tab:>-,trail:-,nbsp:%,extends:>,precedes:<
-set expandtab "ƒ^ƒu“ü—Í‚ğ•¡”‚Ì‹ó”’“ü—Í‚É’u‚«Š·‚¦‚é
-set tabstop=2 "‰æ–Êã‚Åƒ^ƒu•¶š‚ªè‚ß‚é•
-set shiftwidth=2 "©“®ƒCƒ“ƒfƒ“ƒg‚Å‚¸‚ê‚é•
-set softtabstop=2 "˜A‘±‚µ‚½‹ó”’‚É‘Î‚µ‚Äƒ^ƒuƒL[‚âƒoƒbƒNƒXƒy[ƒXƒL[‚ÅƒJ[ƒ\ƒ‹‚ª“®‚­•
-set smartindent "‰üs‚É“ü—Í‚³‚ê‚½s‚Ì––”ö‚É‡‚í‚¹‚ÄŸ‚Ìs‚ÌƒCƒ“ƒfƒ“ƒg‚ğ‘Œ¸‚·‚é
+set expandtab "ã‚¿ãƒ–å…¥åŠ›ã‚’è¤‡æ•°ã®ç©ºç™½å…¥åŠ›ã«ç½®ãæ›ãˆã‚‹
+set tabstop=4 "ç”»é¢ä¸Šã§ã‚¿ãƒ–æ–‡å­—ãŒå ã‚ã‚‹å¹…
+set shiftwidth=4 "è‡ªå‹•ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã§ãšã‚Œã‚‹å¹…
+set softtabstop=4 "é€£ç¶šã—ãŸç©ºç™½ã«å¯¾ã—ã¦ã‚¿ãƒ–ã‚­ãƒ¼ã‚„ãƒãƒƒã‚¯ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼ã§ã‚«ãƒ¼ã‚½ãƒ«ãŒå‹•ãå¹…
+set smartindent "æ”¹è¡Œæ™‚ã«å…¥åŠ›ã•ã‚ŒãŸè¡Œã®æœ«å°¾ã«åˆã‚ã›ã¦æ¬¡ã®è¡Œã®ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã‚’å¢—æ¸›ã™ã‚‹
 
 "---------------------------------------------------------------------------
-" filetype–ˆ‚Ìİ’è
+" filetypeæ¯ã®è¨­å®š
 "
 augroup vimrc
-  autocmd!
+    autocmd!
 augroup END
 autocmd vimrc BufRead,BufNewFile,BufReadPre *.coffee set filetype=coffee
 autocmd vimrc BufRead,BufNewFile,BufReadPre *.hive set filetype=hive
 autocmd vimrc BufRead,BufNewFile,BufReadPre *.q set filetype=hive
 autocmd vimrc BufRead,BufNewFile,BufReadPre *.md set filetype=markdown
 autocmd vimrc BufRead,BufNewFile,BufReadPre *.mkd set filetype=markdown
-autocmd vimrc FileType java setlocal noet sw=4 ts=4 sts=4 fenc=sjis
-autocmd vimrc FileType javascript setlocal noet sw=2 ts=2 sts=2 ff=unix fenc=utf-8
-autocmd vimrc FileType html setlocal noet sw=2 ts=2 sts=2 ff=unix fenc=utf-8
-autocmd vimrc FileType css setlocal noet sw=2 ts=2 sts=2 ff=unix fenc=utf-8
-autocmd vimrc FileType coffee setlocal noet sw=2 ts=2 sts=2 ff=unix fenc=utf-8
+if has('win32')
+    autocmd vimrc FileType java setlocal noet sw=4 ts=4 sts=4 fenc=sjis
+    autocmd vimrc FileType javascript setlocal noet sw=2 ts=2 sts=2 ff=unix fenc=utf-8
+    autocmd vimrc FileType html setlocal noet sw=2 ts=2 sts=2 ff=unix fenc=utf-8
+    autocmd vimrc FileType css setlocal noet sw=2 ts=2 sts=2 ff=unix fenc=utf-8
+    autocmd vimrc FileType coffee setlocal noet sw=2 ts=2 sts=2 ff=unix fenc=utf-8
+endif
 autocmd vimrc FileType json setlocal et ff=unix fenc=utf-8
 autocmd vimrc FileType gitcommit setlocal et ff=unix fenc=utf-8
 autocmd vimrc FileType sh setlocal et ff=unix fenc=utf-8
 autocmd vimrc FileType ruby setlocal et ff=unix fenc=utf-8
 autocmd vimrc FileType python setlocal et ff=unix fenc=utf-8
 autocmd vimrc FileType hive setlocal et ff=unix fenc=utf-8
-autocmd vimrc FileType markdown setlocal et sw=2 ts=2 sts=2 ff=unix fenc=utf-8
+autocmd vimrc FileType markdown setlocal et sw=4 ts=4 sts=4 ff=unix fenc=utf-8
 
+" go setting
+autocmd vimrc FileType go setlocal noet sw=4 ts=4 sts=4 ff=unix fenc=utf-8
+autocmd vimrc FileType go nmap <leader>b <Plug>(go-build)
+autocmd vimrc FileType go nmap <leader>t <Plug>(go-test)
+autocmd vimrc FileType go nmap <leader>c <Plug>(go-coverage)
+
+" java setting
+autocmd vimrc FileType java setlocal noet sw=4 ts=4 sts=4
+autocmd vimrc FileType java nmap <F4> <Plug>(JavaComplete-Imports-Add)
+autocmd vimrc FileType java imap <F4> <Plug>(JavaComplete-Imports-Add)
+autocmd vimrc FileType java nmap <F5> <Plug>(JavaComplete-Imports-AddMissing)
+autocmd vimrc FileType java imap <F5> <Plug>(JavaComplete-Imports-AddMissing)
+autocmd vimrc FileType java nmap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
+autocmd vimrc FileType java imap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
 "---------------------------------------------------------------------------
-" Untite‚Ìİ’è
+" Untiteã®è¨­å®š
 "
 let g:unite_source_file_mru_limit = 300
 let g:unite_source_history_yank_enable = 1
@@ -184,19 +210,19 @@ endif
 nnoremap  [unite]  <Nop>
 nmap      <Space>u  [unite]
 
-" ƒvƒƒWƒFƒNƒgƒtƒ@ƒCƒ‹‚ÌŒŸõ
+" ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æ¤œç´¢
 nnoremap <space><space> :<C-u>Unite -start-insert file_rec/async:!<cr>
-" unite‹N“®
+" uniteèµ·å‹•
 nnoremap [unite]u :<C-u>Unite -no-split<Space>
-" ƒJƒŒƒ“ƒgƒŠƒXƒg
+" ã‚«ãƒ¬ãƒ³ãƒˆãƒªã‚¹ãƒˆ
 nnoremap <silent> [unite]c :<C-u>UniteWithCurrentDir -buffer-name=files buffer file_mru bookmark file<CR>
 " grep
 nnoremap <silent> [unite]g :<C-u>Unite grep:. <CR>
-" ƒoƒbƒtƒ@ƒŠƒXƒg
+" ãƒãƒƒãƒ•ã‚¡ãƒªã‚¹ãƒˆ
 nnoremap <silent> [unite]b :<C-u>Unite buffer<CR>
-" Å‹ßg‚Á‚½ƒtƒ@ƒCƒ‹
+" æœ€è¿‘ä½¿ã£ãŸãƒ•ã‚¡ã‚¤ãƒ«
 nnoremap <silent> [unite]m :<C-u>Unite file_mru<CR>
-" yank—š—ğ
+" yankå±¥æ­´
 nnoremap <silent> [unite]y :<C-u>Unite history/yank<CR>
 " unite-outline
 nnoremap <silent> [unite]o :<C-u>Unite -vertical -no-quit -winwidth=30 outline<CR>
@@ -204,104 +230,121 @@ nnoremap <silent> [unite]o :<C-u>Unite -vertical -no-quit -winwidth=30 outline<C
 nnoremap <space>r <Plug>(unite_restart)
 
 "---------------------------------------------------------------------------
-" neocomplete‚Ìİ’è
+" completeã®è¨­å®š
 "
-" Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
-" Use neocomplete.
-let g:neocomplete#enable_at_startup = 1
-" Use smartcase.
-let g:neocomplete#enable_smart_case = 1
-" Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 3
-let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-
-" Define dictionary.
-let g:neocomplete#sources#dictionary#dictionaries = {
-    \ 'default' : '',
-    \ 'vimshell' : $HOME.'/.vimshell_hist',
-    \ 'scheme' : $HOME.'/.gosh_completions'
-        \ }
-
-" Define keyword.
-if !exists('g:neocomplete#keyword_patterns')
-    let g:neocomplete#keyword_patterns = {}
-endif
-let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-
-" Plugin key-mappings.
-inoremap <expr><C-g>     neocomplete#undo_completion()
-inoremap <expr><C-l>     neocomplete#complete_common_string()
-
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return neocomplete#close_popup() . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-endfunction
-" <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplete#close_popup()
-inoremap <expr><C-e>  neocomplete#cancel_popup()
-
 " Enable omni completion.
 autocmd vimrc FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 autocmd vimrc FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd vimrc FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd vimrc FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-" autocmd vimrc FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd vimrc FileType python setlocal omnifunc=jedi#completions completeopt-=preview
-let g:jedi#completions_enabled = 0
-let g:jedi#auto_vim_configuration = 0
-let g:jedi#rename_command = '<Leader>R'
+autocmd vimrc FileType java setlocal omnifunc=javacomplete#Complete
+autocmd vimrc FileType php setlocal omnifunc=phpcomplete#CompletePHP
+" autocmd vimrc FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
+" let g:phpcomplete_index_composer_command = 'composer'
 
-if !exists('g:neocomplete#force_omni_input_patterns')
-  let g:neocomplete#force_omni_input_patterns = {}
-endif
-let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
-" let g:neocomplete#force_omni_input_patterns.python = '\h\w|[^. \t].\w'
-
-"---------------------------------------------------------------------------
-" snipet‚Ìİ’è
+" jedi-vimã®è¨­å®š
 "
-" Plugin key-mappings.
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
+autocmd vimrc FileType python setlocal omnifunc=jedi#completions
+" jediã«vimã®è¨­å®šã‚’ä»»ã›ã‚‹ã¨'completeopt+=preview'ã™ã‚‹ã®ã§
+" è‡ªå‹•è¨­å®šæ©Ÿèƒ½ã‚’OFFã«ã—æ‰‹å‹•ã§è¨­å®šã‚’è¡Œã†
+let g:jedi#auto_vim_configuration = 0
+" è£œå®Œã®æœ€åˆã®é …ç›®ãŒé¸æŠã•ã‚ŒãŸçŠ¶æ…‹ã ã¨ä½¿ã„ã«ãã„ãŸã‚ã‚ªãƒ•ã«ã™ã‚‹
+let g:jedi#popup_select_first = 0
+" quickrunã¨è¢«ã‚‹ãŸã‚å¤§æ–‡å­—ã«å¤‰æ›´
+let g:jedi#rename_command = '<Leader>R'
+let g:jedi#popup_on_dot = 0
+" let g:jedi#auto_initialization = 1
 
-" SuperTab like snippets behavior.
-imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)"
-\: pumvisible() ? "\<C-n>" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)"
-\: "\<TAB>"
+" neocompleteã®è¨­å®š
+" http://pocke.hatenablog.com/entry/2015/10/01/222216
+"
+if neobundle#tap('neocomplete')
+  call neobundle#config({
+  \   'depends': ['Shougo/context_filetype.vim', 'ujihisa/neco-look', 'pocke/neco-gh-issues', 'Shougo/neco-syntax'],
+  \ })
 
-" For snippet_complete marker.
-if has('conceal')
-  set conceallevel=2 concealcursor=i
+  " èµ·å‹•æ™‚ã«æœ‰åŠ¹åŒ–
+  let g:neocomplete#enable_at_startup = 1
+  " å¤§æ–‡å­—ãŒå…¥åŠ›ã•ã‚Œã‚‹ã¾ã§å¤§æ–‡å­—å°æ–‡å­—ã®åŒºåˆ¥ã‚’ç„¡è¦–ã™ã‚‹
+  let g:neocomplete#enable_smart_case = 1
+  " _(ã‚¢ãƒ³ãƒ€ãƒ¼ã‚¹ã‚³ã‚¢)åŒºåˆ‡ã‚Šã®è£œå®Œã‚’æœ‰åŠ¹åŒ–
+  let g:neocomplete#enable_underbar_completion = 1
+  let g:neocomplete#enable_camel_case_completion  =  1
+  " ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã§è¡¨ç¤ºã•ã‚Œã‚‹å€™è£œã®æ•°
+  let g:neocomplete#max_list = 20
+  " ã‚·ãƒ³ã‚¿ãƒƒã‚¯ã‚¹ã‚’ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã™ã‚‹ã¨ãã®æœ€å°æ–‡å­—é•·
+  let g:neocomplete#sources#syntax#min_keyword_length = 3
+  " è£œå®Œã‚’è¡¨ç¤ºã™ã‚‹æœ€å°æ–‡å­—æ•°
+  let g:neocomplete#auto_completion_start_length = 2
+  " preview window ã‚’é–‰ã˜ãªã„
+  let g:neocomplete#enable_auto_close_preview = 0
+  autocmd InsertLeave * silent! pclose!
+
+  let g:neocomplete#max_keyword_width = 10000
+
+  if !exists('g:neocomplete#sources#omni#input_patterns')
+    let g:neocomplete#sources#omni#input_patterns = {}
+  endif
+
+  let g:neocomplete#sources#omni#input_patterns.javascript = '[^. \t]\.\%(\h\w*\)\?'
+  let g:neocomplete#sources#omni#input_patterns.java = '[^. \t]\.\%(\h\w*\)\?'
+  let g:neocomplete#sources#omni#input_patterns.python = '[^. \t]\.\%(\h\w*\)\?'
+  let g:neocomplete#sources#omni#input_patterns.go = '[^.[:digit:] *\t]\.\w*'
+  let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+
+  call neocomplete#custom#source('look', 'min_pattern_length', 1)
+
+  call neobundle#untap()
 endif
 
-" Enable snipMate compatibility feature.
-let g:neosnippet#enable_snipmate_compatibility = 2
+"---------------------------------------------------------------------------
+" snipetã®è¨­å®š
+"
+if neobundle#tap('neosnippet')
+  "http://kazuph.hateblo.jp/entry/2013/01/19/193745
 
-" Tell Neosnippet about the other snippets
-let g:neosnippet#snippets_directory="$VIMLOCAL/bundle/vim-snippets/snippets, $VIM/snippets"
+  " <TAB>: completion.
+  inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
+
+  " Plugin key-mappings.
+  imap <silent><C-k> <Esc>:let g:neosnippet_expanding_or_jumpping = 1<CR>a<Plug>(neosnippet_expand_or_jump)
+  smap <C-k> <Plug>(neosnippet_expand_or_jump)
+
+  " SuperTab like snippets behavior.
+  imap <expr><TAB> pumvisible() ? "\<C-n>" : neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+  smap <expr><TAB> neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+
+  " For snippet_complete marker.
+  if has('conceal')
+    set conceallevel=2 concealcursor=i
+  endif
+
+  " Enable snipMate compatibility feature.
+  let g:neosnippet#enable_snipmate_compatibility = 1
+  " Tell Neosnippet about the other snippets
+  let g:neosnippet#snippets_directory="$VIMLOCAL/bundle/vim-snippets/snippets, $VIM/snippets"
+
+  call neobundle#untap()
+endif
 
 "---------------------------------------------------------------------------
-" vimfiler‚Ìİ’è
+" quickrunã®è¨­å®š
+"
+let g:quickrun_config = get(g:, 'quickrun_config', {})
+let g:quickrun_config._ = {
+      \ 'runner'    : 'vimproc',
+      \ 'runner/vimproc/updatetime' : 60,
+      \ }
+
+"---------------------------------------------------------------------------
+" vimfilerã®è¨­å®š
 "
 let g:vimfiler_enable_auto_cd = 1
 let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_safe_mode_by_default = 0
 
 "---------------------------------------------------------------------------
-" syntastic‚Ìİ’è
+" syntasticã®è¨­å®š
 "
 let b:is_bash = 1
 let g:syntastic_css_csslint_args = '--ignore=box-model,ids,adjoining-classes,universal-selector,important'
@@ -309,7 +352,7 @@ let g:syntastic_javascript_jshint_conf_args = '--config "d:/tool/js_coding_conve
 let g:syntastic_python_checkers = ['flake8']
 
 "---------------------------------------------------------------------------
-" jq‚Ìİ’è
+" jqã®è¨­å®š
 "
 command! -nargs=? Jq call s:Jq(<f-args>)
 function! s:Jq(...)
@@ -323,27 +366,17 @@ function! s:Jq(...)
 endfunction
 
 "---------------------------------------------------------------------------
-" matchit‚Ìİ’è
-" ‘Î‰‚·‚é’PŒê‚ğu%v‚ÅˆÚ“®
+" matchitã®è¨­å®š
+" å¯¾å¿œã™ã‚‹å˜èªã‚’ã€Œ%ã€ã§ç§»å‹•
 source $VIMRUNTIME/macros/matchit.vim
 let b:match_ignorecase = 1
-let b:match_words = "u:v"
+let b:match_words = "ã€Œ:ã€"
 
 "---------------------------------------------------------------------------
-" backup,swap‚Ìİ’è
+" backup,swapã®è¨­å®š
 "
-if !isdirectory(expand("$VIMLOCAL/backup"))
-  lcd $VIMLOCAL
-  silent !mkdir backup
-endif
-set backup
-set backupdir=$VIMLOCAL/backup
-if !isdirectory(expand("$VIMLOCAL/swapfiles"))
-  lcd $VIMLOCAL
-  silent !mkdir swapfiles
-endif
-set swapfile
-set directory=$VIMLOCAL/swapfiles
+set nobackup
+set noswapfile
 if !isdirectory(expand("$VIMLOCAL/undofiles"))
   lcd $VIMLOCAL
   silent !mkdir undofiles
@@ -352,53 +385,61 @@ set undofile
 set undodir=$VIMLOCAL/undofiles
 
 "---------------------------------------------------------------------------
-" Œ©‚½–Ú‚Æ‚©
+" è¦‹ãŸç›®ã®è¨­å®š
 "
-" V‚µ‚¢ƒEƒBƒ“ƒhƒE‚ğ‰E‰º‚ÉŠJ‚­
-set splitbelow splitright
-colorscheme hybrid
-
-"---------------------------------------------------------------------------
-" Œ©‚½–Ú‚Ìİ’è
+if !has('gui_running')
+  colorscheme solarized
+endif
 set cursorline
 set number
-"ƒr[ƒv‰¹‚·‚×‚Ä‚ğ–³Œø‚É‚·‚é
+"ãƒ“ãƒ¼ãƒ—éŸ³ã™ã¹ã¦ã‚’ç„¡åŠ¹ã«ã™ã‚‹
 set visualbell t_vb=
-set noerrorbells 
-
+set noerrorbells
+" æ–°ã—ã„ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’å³ä¸‹ã«é–‹ã
+set splitbelow splitright
+" ã‚«ãƒ¼ã‚½ãƒ«ã®è¦‹ãŸç›®
+if empty($TMUX)
+  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+  let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+else
+  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+  let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
+endif
 "---------------------------------------------------------------------------
-" ƒƒ‚‚Æ‚©‚Ìİ’è
+" ãƒ¡ãƒ¢ã¨ã‹ã®è¨­å®š
 "
-" TODOƒtƒ@ƒCƒ‹
+" TODOãƒ•ã‚¡ã‚¤ãƒ«
 command! Todo edit ~/todo.txt
-" “ú•ñ
+" æ—¥å ±
 command! -nargs=? Nippo call s:Nippo()
 function! s:Nippo()
   let l:day = (60 * 60 * 24)
-  let l:w_file = 'D:/My Documents/“ú•ñ/' . strftime("%Y%m%d") . '.md'
+  let l:w_file = 'D:/My Documents/æ—¥å ±/' . strftime("%Y%m%d") . '.md'
   execute 'edit ' . l:w_file
   if !filereadable(l:w_file)
-    " 3“ú‘O‚Ü‚Å’T‚·
+    " 3æ—¥å‰ã¾ã§æ¢ã™
     let l:search_day = localtime()
     for i in range(1, 3)
       let l:search_day = l:search_day - l:day
-      let l:r_file = 'D:/My Documents/“ú•ñ/' . strftime("%Y%m%d", l:search_day) . '.md'
+      let l:r_file = 'D:/My Documents/æ—¥å ±/' . strftime("%Y%m%d", l:search_day) . '.md'
       if filereadable(l:r_file)
         execute '0r ' . l:r_file
         break
       endif
     endfor
-    " Œ‹‰Ê‚ğ‘
+    " çµæœã‚’æ›¸è¾¼
     write
   endif
 endfunction
-" ƒƒ‚
-command! -nargs=1 Memo edit D:/My Documents/‹c–ƒƒ‚/<args>.txt
-" ˆêƒtƒ@ƒCƒ‹
+" ãƒ¡ãƒ¢
+command! -nargs=1 Memo edit ~/Documents/memo/<args>.md
+" ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«
 command! -nargs=1 Tmp edit ~/.vim/tmp.<args>
 command! -nargs=1 Temp edit ~/.vim/tmp.<args>
 " cd
 command! Ccd lcd %:p:h
-" vimgrep‚ÌŒ‹‰Ê‚ğquickfix‚Å•\¦
+" vimgrepã®çµæœã‚’quickfixã§è¡¨ç¤º
 autocmd vimrc QuickFixCmdPost *grep* cwindow
 set number
