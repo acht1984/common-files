@@ -1,145 +1,159 @@
-# License : MIT
-# http://mollifier.mit-license.org/
-
-########################################
+# -------------------------------------
 # 環境変数
-export LANG=ja_JP.UTF-8
+# -------------------------------------
 
+# SSHで接続した先で日本語が使えるようにする
+export LC_CTYPE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
-# 色を使用出来るようにする
-autoload -Uz colors
-colors
+# エディタ
+if [ -f /Applications/MacVim.app/Contents/MacOS/Vim ]; then
+  alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim -C -u NONE --noplugin "$@"'
+  alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+  alias emacs="/usr/local/Cellar/emacs/24.3/Emacs.app/Contents/MacOS/Emacs -nw"
+  export GIT_EDITOR='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim -C -u NONE --noplugin "$@"'
+fi
 
-# emacs 風キーバインドにする
-bindkey -e
+# java
+alias javac='javac -J-Dfile.encoding=UTF8'
+alias java='java -Dfile.encoding=UTF8'
 
-# ヒストリの設定
-HISTFILE=~/.zsh_history
-HISTSIZE=1000000
-SAVEHIST=1000000
+# -------------------------------------
+# zshのオプション
+# -------------------------------------
 
-# プロンプト
-# 1行表示
-# PROMPT="%~ %# "
-# 2行表示
-PROMPT="%{${fg[green]}%}[%n@%m]%{${reset_color}%} %~
-%# "
-
-
-# 単語の区切り文字を指定する
-autoload -Uz select-word-style
-select-word-style default
-# ここで指定した文字は単語区切りとみなされる
-# / も区切りと扱うので、^W でディレクトリ１つ分を削除できる
-zstyle ':zle:*' word-chars " /=;@:{},|"
-zstyle ':zle:*' word-style unspecified
-
-########################################
-# 補完
-# 補完機能を有効にする
-autoload -Uz compinit
+## 補完機能の強化
+autoload -U compinit
 compinit
 
-# 補完で小文字でも大文字にマッチさせる
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+## 入力しているコマンド名が間違っている場合にもしかして：を出す。
+setopt correct
 
-# ../ の後は今いるディレクトリを補完しない
-zstyle ':completion:*' ignore-parents parent pwd ..
+# ビープを鳴らさない
+setopt nobeep
 
-# sudo の後ろでコマンド名を補完する
-zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
-                   /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
+## 色を使う
+setopt prompt_subst
 
-# ps コマンドのプロセス名補完
-zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
+## ^Dでログアウトしない。
+setopt ignoreeof
 
+## バックグラウンドジョブが終了したらすぐに知らせる。
+setopt no_tify
 
-########################################
-# vcs_info
-autoload -Uz vcs_info
-autoload -Uz add-zsh-hook
+## 直前と同じコマンドをヒストリに追加しない
+setopt hist_ignore_dups
 
-zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
-zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
+# 補完
+## タブによるファイルの順番切り替えをしない
+unsetopt auto_menu
 
-function _update_vcs_info_msg() {
-    LANG=en_US.UTF-8 vcs_info
-    RPROMPT="${vcs_info_msg_0_}"
-}
-add-zsh-hook precmd _update_vcs_info_msg
+# cd -[tab]で過去のディレクトリにひとっ飛びできるようにする
+setopt auto_pushd
 
-
-########################################
-# オプション
-# 日本語ファイル名を表示可能にする
-setopt print_eight_bit
-
-# beep を無効にする
-setopt no_beep
-
-# フローコントロールを無効にする
-setopt no_flow_control
-
-# Ctrl+Dでzshを終了しない
-setopt ignore_eof
-
-# '#' 以降をコメントとして扱う
-setopt interactive_comments
-
-# ディレクトリ名だけでcdする
+# ディレクトリ名を入力するだけでcdできるようにする
 setopt auto_cd
 
-# cd したら自動的にpushdする
-setopt auto_pushd
-# 重複したディレクトリを追加しない
-setopt pushd_ignore_dups
+# -------------------------------------
+# パス
+# -------------------------------------
 
-# 同時に起動したzshの間でヒストリを共有する
-setopt share_history
+# 重複する要素を自動的に削除
+typeset -U path cdpath fpath manpath
 
-# 同じコマンドをヒストリに残さない
-setopt hist_ignore_all_dups
+path=(
+    $HOME/bin(N-/)
+    /usr/local/bin(N-/)
+    /usr/local/sbin(N-/)
+    $path
+)
 
-# スペースから始まるコマンド行はヒストリに残さない
-setopt hist_ignore_space
+# -------------------------------------
+# プロンプト
+# -------------------------------------
 
-# ヒストリに保存するときに余分なスペースを削除する
-setopt hist_reduce_blanks
+autoload -U promptinit; promptinit
+autoload -Uz colors; colors
+autoload -Uz vcs_info
+autoload -Uz is-at-least
 
-# 高機能なワイルドカード展開を使用する
-setopt extended_glob
+# begin VCS
+zstyle ":vcs_info:*" enable git svn hg bzr
+zstyle ":vcs_info:*" formats "(%s)-[%b]"
+zstyle ":vcs_info:*" actionformats "(%s)-[%b|%a]"
+zstyle ":vcs_info:(svn|bzr):*" branchformat "%b:r%r"
+zstyle ":vcs_info:bzr:*" use-simple true
 
-########################################
-# キーバインド
+zstyle ":vcs_info:*" max-exports 6
 
-# ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
-bindkey '^R' history-incremental-pattern-search-backward
+if is-at-least 4.3.10; then
+    zstyle ":vcs_info:git:*" check-for-changes true # commitしていないのをチェック
+    zstyle ":vcs_info:git:*" stagedstr "<S>"
+    zstyle ":vcs_info:git:*" unstagedstr "<U>"
+    zstyle ":vcs_info:git:*" formats "(%b) %c%u"
+    zstyle ":vcs_info:git:*" actionformats "(%s)-[%b|%a] %c%u"
+fi
 
-########################################
+function vcs_prompt_info() {
+    LANG=en_US.UTF-8 vcs_info
+    [[ -n "$vcs_info_msg_0_" ]] && echo -n " %{$fg[yellow]%}$vcs_info_msg_0_%f"
+}
+# end VCS
+
+OK="^_^ "
+NG="X_X "
+
+PROMPT=""
+PROMPT+="%(?.%F{green}$OK%f.%F{red}$NG%f) "
+PROMPT+="%F{blue}%~%f"
+PROMPT+="\$(vcs_prompt_info)"
+PROMPT+="
+"
+PROMPT+="%% "
+
+RPROMPT="[%*]"
+
+# -------------------------------------
 # エイリアス
+# -------------------------------------
 
-alias la='ls -a'
-alias ll='ls -l'
+# -n 行数表示, -I バイナリファイル無視, svn関係のファイルを無視
+alias grep="grep --color -n -I --exclude='*.svn-*' --exclude='entries' --exclude='*/cache/*'"
 
-alias rm='rm -i'
-alias cp='cp -i'
-alias mv='mv -i'
+# ls
+alias ls="ls -G" # color for darwin
+alias ll="ls -l"
+alias la="ls -la"
+alias l1="ls -1"
 
-# sudo の後のコマンドでエイリアスを有効にする
-alias sudo='sudo '
+# tree
+alias tree="tree -NC" # N: 文字化け対策, C:色をつける
 
-########################################
-# OS 別の設定
-case ${OSTYPE} in
-    darwin*)
-        #Mac用の設定
-        export CLICOLOR=1
-        alias ls='ls -G -F'
-        ;;
-    linux*)
-        #Linux用の設定
-        alias ls='ls -F --color=auto'
-        ;;
-esac
+# ctags
+alias ctags="`brew --prefix`/bin/ctags"
 
-# vim:set ft=zsh:
+# -------------------------------------
+# キーバインド
+# -------------------------------------
+
+bindkey -e
+
+function cdup() {
+   echo
+   cd ..
+   zle reset-prompt
+}
+zle -N cdup
+bindkey '^K' cdup
+
+bindkey "^R" history-incremental-search-backward
+
+# -------------------------------------
+# その他
+# -------------------------------------
+
+# iTerm2のタブ名を変更する
+function title {
+    echo -ne "\033]0;"$*"\007"
+}
+

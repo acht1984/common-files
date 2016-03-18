@@ -96,7 +96,8 @@ NeoBundleLazy "lambdalisue/vim-django-support", {
 NeoBundle 'jmcantrell/vim-virtualenv'
 NeoBundle 'fatih/vim-go'
 NeoBundle 'artur-shaik/vim-javacomplete2'
-NeoBundle 'shawncplus/phpcomplete.vim'
+NeoBundle 'soramugi/auto-ctags.vim'
+" NeoBundle 'shawncplus/phpcomplete.vim'
 " NeoBundle 'm2mdas/phpcomplete-extended'
 " NeoBundle 'm2mdas/phpcomplete-extended-laravel'
 
@@ -190,6 +191,7 @@ autocmd vimrc FileType java nmap <F5> <Plug>(JavaComplete-Imports-AddMissing)
 autocmd vimrc FileType java imap <F5> <Plug>(JavaComplete-Imports-AddMissing)
 autocmd vimrc FileType java nmap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
 autocmd vimrc FileType java imap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
+
 "---------------------------------------------------------------------------
 " Untiteの設定
 "
@@ -199,7 +201,7 @@ let g:unite_split_rule = "rightbelow"
 
 " for ag
 if executable('ag')
-  let g:unite_source_rec_async_command='ag --nocolor --nogroup -g ""'
+  let g:unite_source_rec_async_command=['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', '']
   call unite#filters#matcher_default#use(['matcher_fuzzy'])
   let g:unite_source_grep_command = 'ag'
   let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
@@ -238,10 +240,9 @@ autocmd vimrc FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd vimrc FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd vimrc FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd vimrc FileType java setlocal omnifunc=javacomplete#Complete
-autocmd vimrc FileType php setlocal omnifunc=phpcomplete#CompletePHP
-" autocmd vimrc FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
+" autocmd vimrc FileType php setlocal omnifunc=phpcomplete#CompletePHP
 " let g:phpcomplete_index_composer_command = 'composer'
-
+" autocmd vimrc FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
 " jedi-vimの設定
 "
 autocmd vimrc FileType python setlocal omnifunc=jedi#completions
@@ -290,7 +291,7 @@ if neobundle#tap('neocomplete')
   let g:neocomplete#sources#omni#input_patterns.java = '[^. \t]\.\%(\h\w*\)\?'
   let g:neocomplete#sources#omni#input_patterns.python = '[^. \t]\.\%(\h\w*\)\?'
   let g:neocomplete#sources#omni#input_patterns.go = '[^.[:digit:] *\t]\.\w*'
-  let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+  " let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 
   call neocomplete#custom#source('look', 'min_pattern_length', 1)
 
@@ -407,6 +408,15 @@ else
   let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
   let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
 endif
+
+"---------------------------------------------------------------------------
+" ctags
+"
+set tags+=.git/tags
+let g:auto_ctags_directory_list = ['.git']
+let g:auto_ctags = 0
+let g:auto_ctags_filetype_mode = 1
+
 "---------------------------------------------------------------------------
 " メモとかの設定
 "
