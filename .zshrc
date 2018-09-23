@@ -7,14 +7,6 @@ export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export PAGER=LESS
 
-# エディタ
-if [ -f /Applications/MacVim.app/Contents/MacOS/Vim ]; then
-  alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim -C -u NONE --noplugin "$@"'
-  alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
-  alias emacs="/usr/local/Cellar/emacs/24.3/Emacs.app/Contents/MacOS/Emacs -nw"
-  export GIT_EDITOR='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim -C -u NONE --noplugin "$@"'
-fi
-
 # java
 alias javac='javac -J-Dfile.encoding=UTF8'
 alias java='java -Dfile.encoding=UTF8'
@@ -158,3 +150,7 @@ function title {
     echo -ne "\033]0;"$*"\007"
 }
 
+export PATH="$HOME/.anyenv/bin:$PATH"
+eval "$(anyenv init -)"
+
+export GOPATH=~/go

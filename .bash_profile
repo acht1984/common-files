@@ -128,3 +128,5 @@ alias ll="ls -l"
 if [ $(uname) = "Linux" ] ;then alias ls="ls --color=auto -AF"; fi
 
 source ~/.bashrc
+export PATH="$HOME/.anyenv/bin:$PATH"
+eval "$(anyenv init -)"
